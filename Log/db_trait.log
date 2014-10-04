@@ -1,0 +1,4 @@
+2014-10-04 10:59:48: 
+				INSERT INTO user
+				(`name`,`age`)
+				VALUES (:name,:age)
