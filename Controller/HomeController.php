@@ -9,7 +9,7 @@ class HomeController extends Controller {
 			'age'  => rand(10, 99)
 		]);
 
-		$user2 = Entity::load('user', 1);
+		$user2 = Repository::load('user', 1);
 
 		$user1->id = Repository::get('user')->persist($user1);
 		$user2->id = Repository::get('user')->persist($user2);
