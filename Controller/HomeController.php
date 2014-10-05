@@ -1,12 +1,10 @@
 <?php
 
-class HomeController extends BaseController
-{
+class HomeController extends Controller {
 	protected static $log = 'home.log';
 
-	public function indexAction($params)
-	{
-	 	$user1 = Entity::make('user', [
+	public function indexAction($params) {
+		$user1 = Entity::make('user', [
 			'name' => 'Jake',
 			'age'  => rand(10, 99)
 		]);
@@ -18,8 +16,8 @@ class HomeController extends BaseController
 
 		return [
 			'layout' => 'index',
-			'user1'   => $user1,
-			'user2'   => $user2
+			'user1'  => $user1,
+			'user2'  => $user2
 		];
 	}
 

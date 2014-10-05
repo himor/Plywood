@@ -1,13 +1,11 @@
 <?php
 
-class Manager
-{
+class Manager {
 	use LoggerTrait;
 
 	protected static $instances = [];
 
-	public static function get($name)
-	{
+	public static function get($name) {
 		if (!$name) {
 			throw new Exception('You must specify a name');
 		}

@@ -1,13 +1,22 @@
 <?php
 
-class Repository
-{
+/**
+ * Class Repository - base class for repository
+ */
+class Repository {
 	use LoggerTrait;
 
 	protected static $instances = [];
 
-	public static function get($name)
-	{
+	/**
+	 * Returns an instance of repository
+	 *
+	 * @param $name
+	 *
+	 * @return mixed
+	 * @throws Exception
+	 */
+	public static function get($name) {
 		if (!$name) {
 			throw new Exception('You must specify a name');
 		}
@@ -37,19 +46,18 @@ class Repository
 	 *
 	 * @param Entity $entity
 	 */
-	public function persist(Entity $entity)
-	{
+	public function persist(Entity $entity) {
 		$table = $entity->_table;
 
 		$vars = get_object_vars($entity);
-		$a = [];
-		$b = [];
-		$c = [];
+		$a    = [];
+		$b    = [];
+		$c    = [];
 		foreach ($vars as $key => $value) {
 			if (substr($key, 0, 1) == '_') continue;
-			$a[] = $key;
+			$a[]           = $key;
 			$b[':' . $key] = $value;
-			$c[] = '`' . $key . '` = :' . $key;
+			$c[]           = '`' . $key . '` = :' . $key;
 		}
 
 		$manager = Manager::get('db');
@@ -59,29 +67,56 @@ class Repository
 				INSERT INTO " . $table . "
 				(`" . implode('`,`', $a) . "`)
 				VALUES (" . implode(',', array_keys($b)) . ")"
-					, $b);
+				, $b);
+
 			return $manager->lastInsertedId();
 		} else {
 			$manager->exec("
 					UPDATE " . $table . "
 					SET " . implode(',', $c) . "
 					WHERE `id` = :id", $b);
+
 			return $entity->id;
 		}
 	}
 
 	/**
-	 * Load the entity
+	 * Loads and returns an entity
 	 *
-	 * @param unknown $id
+	 * @param $name
+	 * @param $id
+	 *
+	 * @return mixed
+	 * @throws Exception
 	 */
-	public function load($entity, $id)
-	{
-		$table = $entity->_table;
+	public static function load($name, $id) {
+		if (!$name) {
+			throw new Exception('You must specify a name');
+		}
 
-		$manager = Manager::get('db');
-		return $manager->getOneSafe("
-				SELECT * FROM " . $table . " WHERE id = " . $id . "
+		$id = (int)$id;
+
+		if (!$id) {
+			throw new Exception('You must specify an id');
+		}
+
+		$name = ucfirst($name) . 'Entity';
+
+		if (!file_exists(ROOT_DIR . 'Entity/' . $name . '.php')) {
+			throw new Exception('Class not found ' . $name);
+		}
+
+		if (!class_exists($name)) {
+			include_once ROOT_DIR . 'Entity/' . $name . '.php';
+		}
+
+		$tempEntity = new $name();
+		$manager    = Manager::get('db');
+		$params     = $manager->getOneSafe("
+				SELECT * FROM " . $tempEntity->_table . " WHERE id = " . $id . "
 				");
+
+		return new $name($params);
 	}
+
 }

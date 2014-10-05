@@ -1,7 +1,6 @@
 <?php
 
-class BaseController
-{
+class Controller {
 	use LoggerTrait;
 
 }

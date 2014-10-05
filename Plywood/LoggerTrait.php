@@ -1,17 +1,15 @@
 <?php
 
-trait LoggerTrait
-{
+trait LoggerTrait {
 	protected static $log = 'log.log';
 
 	/**
 	 * Write Log message to a file
 	 *
-	 * @param string | array $message
-	 * @param string $filename
+	 * @param      $message
+	 * @param null $filename
 	 */
-	public function Log($message, $filename = null)
-	{
+	public function Log($message, $filename = null) {
 		if (!$filename) {
 			$filename = static::$log;
 		}
@@ -21,7 +19,7 @@ trait LoggerTrait
 		}
 
 		$filename = ROOT_DIR . 'Log/' . $filename;
-		$now = new DateTime();
+		$now      = new DateTime();
 		$message  = $now->format('Y-m-d H:i:s') . ': ' . $message . "\n";
 
 		if (file_exists($filename)) {

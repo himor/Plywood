@@ -1,11 +1,9 @@
 <?php
 
-class Config
-{
-	public static function get()
-	{
+class Config {
+	public static function get() {
 		return [
-			'db' => [
+			'db'      => [
 				'hostname' => 'localhost',
 				'user'     => 'root',
 				'password' => 'root',
