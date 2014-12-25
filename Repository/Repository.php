@@ -115,6 +115,10 @@ class Repository {
 		$params     = $manager->getOneSafe("
 				SELECT * FROM " . $tempEntity->_table . " WHERE id = " . $id . "
 				");
+				
+		if (empty($params)) {
+			return null;
+		}
 
 		return new $name($params);
 	}
