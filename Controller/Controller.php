@@ -1,6 +1,7 @@
 <?php
 
-class Controller {
-	use LoggerTrait;
+class Controller
+{
+    use LoggerTrait;
 
 }
