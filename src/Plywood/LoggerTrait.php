@@ -1,11 +1,13 @@
 <?php
 
+namespace Plywood\Plywood;
+
 trait LoggerTrait
 {
     protected static $log = 'log.log';
 
     /**
-     * Write Log message to a file
+     * Write logs message to a file
      *
      * @param      $message
      * @param null $filename
@@ -20,8 +22,8 @@ trait LoggerTrait
             $message = print_r($message, true);
         }
 
-        $filename = ROOT_DIR . 'Log/' . $filename;
-        $now      = new DateTime();
+        $filename = ROOT_DIR . 'logs/' . $filename;
+        $now      = new \DateTime();
         $message  = $now->format('Y-m-d H:i:s') . ': ' . $message . "\n";
 
         if (file_exists($filename)) {

@@ -1,11 +1,13 @@
 <?php
 
+namespace Plywood\Repository;
+
 /**
  * Class Repository - base class for repository
  */
 class Repository
 {
-    use LoggerTrait;
+    use \Plywood\Plywood\LoggerTrait;
 
     protected static $instances = [];
 
@@ -15,26 +17,18 @@ class Repository
      * @param $name
      *
      * @return mixed
-     * @throws Exception
+     * @throws \Exception
      */
     public static function get($name)
     {
         if (!$name) {
-            throw new Exception('You must specify a name');
+            throw new \Exception('You must specify a name');
         }
 
-        $name = ucfirst($name) . 'Repository';
+        $name = "\\" . __NAMESPACE__ . "\\" . ucfirst($name) . 'Repository';
 
         if (isset(self::$instances[$name])) {
             return self::$instances[$name];
-        }
-
-        if (!file_exists(ROOT_DIR . 'Repository/' . $name . '.php')) {
-            throw new Exception('Class not found ' . $name);
-        }
-
-        if (!class_exists($name)) {
-            include_once ROOT_DIR . 'Repository/' . $name . '.php';
         }
 
         self::$instances[$name] = new $name();
@@ -46,9 +40,9 @@ class Repository
      * Persistence
      * All properties starting with _ will be ignored!
      *
-     * @param Entity $entity
+     * @param \Plywood\Entity\Entity $entity
      */
-    public function persist(Entity $entity)
+    public function persist(\Plywood\Entity\Entity $entity)
     {
         $table = $entity->_table;
 
@@ -63,7 +57,7 @@ class Repository
             $c[]           = '`' . $key . '` = :' . $key;
         }
 
-        $manager = Manager::get('db');
+        $manager = \Plywood\Manager\Manager::get('db');
 
         if (!isset($entity->id)) {
             $manager->exec("
@@ -90,32 +84,24 @@ class Repository
      * @param $id
      *
      * @return mixed
-     * @throws Exception
+     * @throws \Exception
      */
     public static function load($name, $id)
     {
         if (!$name) {
-            throw new Exception('You must specify a name');
+            throw new \Exception('You must specify a name');
         }
 
         $id = (int)$id;
 
         if (!$id) {
-            throw new Exception('You must specify an id');
+            throw new \Exception('You must specify an id');
         }
 
-        $name = ucfirst($name) . 'Entity';
-
-        if (!file_exists(ROOT_DIR . 'Entity/' . $name . '.php')) {
-            throw new Exception('Class not found ' . $name);
-        }
-
-        if (!class_exists($name)) {
-            include_once ROOT_DIR . 'Entity/' . $name . '.php';
-        }
+        $name = "\\Plywood\\Entity\\" . ucfirst($name) . 'Entity';
 
         $tempEntity = new $name();
-        $manager    = Manager::get('db');
+        $manager    = \Plywood\Manager\Manager::get('db');
         $params     = $manager->getOneSafe("
 				SELECT * FROM " . $tempEntity->_table . " WHERE id = " . $id . "
 				");

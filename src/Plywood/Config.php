@@ -1,5 +1,7 @@
 <?php
 
+namespace Plywood\Plywood;
+
 class Config
 {
     public static function get()
@@ -7,9 +9,9 @@ class Config
         return [
             'db'      => [
                 'hostname' => 'localhost',
-                'user'     => 'root',
-                'password' => 'root',
-                'name'     => 'duser041_testing',
+                'user'     => 'plywood',
+                'password' => 'plwd1234',
+                'name'     => 'testing',
             ],
             'routing' => [
                 'index' => ["pattern" => "/", 'controller' => "Home"],
@@ -19,3 +21,15 @@ class Config
         ];
     }
 }
+
+/**
+ CREATE USER 'plywood'@'localhost' IDENTIFIED BY 'plwd1234';
+ CREATE DATABASE testing;
+ USE testing;
+ GRANT ALL PRIVILEGES ON testing.* TO 'plywood'@'localhost';
+ CREATE TABLE IF NOT EXISTS `user` (
+id BIGINT AUTO_INCREMENT PRIMARY KEY,
+name VARCHAR(50),
+age INT);
+ INSERT INTO user VALUES(1,"Alex",33);
+ */

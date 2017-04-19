@@ -1,5 +1,7 @@
 <?php
 
+namespace Plywood\Controller;
+
 /**
  * Class AjaxController - process ajax requests
  */

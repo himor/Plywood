@@ -1,8 +1,10 @@
 <?php
 
+namespace Plywood\Manager;
+
 class DbManager extends Manager
 {
-    use DbTrait;
+    use \Plywood\Plywood\DbTrait;
 
     public function getOne($query, $params = array())
     {

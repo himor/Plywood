@@ -1,21 +1,27 @@
 <?php
 
-class Plywood
+namespace Plywood\Plywood;
+
+class Core
 {
     public static $config;
 
     public function __construct()
     {
-        define('ROOT_SRC', dirname(__FILE__) . '/');
-        define('ROOT_DIR', dirname(__FILE__) . '/../');
-        define('URL_BASE', '/testing/');
-        $this->load();
         self::$config = Config::get();
     }
 
     public function init()
     {
-        $path = trim(str_replace(URL_BASE, '', $_SERVER['REQUEST_URI']), '/');
+        $requestUri = '';
+        if (!empty($_ENV['REQUEST_URI'])) {
+            $requestUri = $_ENV['REQUEST_URI'];
+        }
+        if (!empty($_SERVER['REQUEST_URI'])) {
+            $requestUri = $_SERVER['REQUEST_URI'];
+        }
+
+        $path = trim(str_replace(URL_BASE, '', $requestUri), '/');
         $uri  = '/' . $path;
 
         /**
@@ -41,8 +47,7 @@ class Plywood
                  * Ajax Controller - special case
                  */
                 if ($controllerName == 'Ajax') {
-                    include_once ROOT_DIR . 'Controller/AjaxController.php';
-                    $controller = new AjaxController();
+                    $controller = new \Plywood\Controller\AjaxController();
                     if (isset($params['function_name']) && $params['function_name'])
                         $function_name = $params['function_name'] . "Action";
                     else $function_name = "indexAction";
@@ -50,10 +55,9 @@ class Plywood
                     /**
                      *    Initialize the controller
                      */
-                    $controllerName = $controllerName . "Controller";
-                    include_once ROOT_DIR . 'Controller/' . $controllerName . '.php';
-                    $controller    = new $controllerName;
-                    $function_name = $action . "Action";
+                    $controllerName = "\\Plywood\\Controller\\" .  $controllerName . "Controller";
+                    $controller     = new $controllerName;
+                    $function_name  = $action . "Action";
                 }
 
                 /**
@@ -93,7 +97,7 @@ class Plywood
                  *    Include the layout
                  */
                 ob_start();
-                include(ROOT_DIR . 'View/' . $rule["controller"] . '/' . $layout_name . '.php');
+                include(ROOT_SRC . 'View/' . $rule["controller"] . '/' . $layout_name . '.php');
                 $output = ob_get_clean();
                 //$output = preg_replace("/[\ \t\n]+/", " ", $output); // ZIPPING
                 echo $output;
@@ -102,32 +106,6 @@ class Plywood
         }
 
         /* nothing is found so handle 404 error */
-        include(ROOT_DIR . 'View/' . '404.php');
+        include(ROOT_SRC . 'View/' . '404.php');
     }
-
-    /**
-     * Load Base Classes
-     */
-    private function load()
-    {
-        $files = [
-            ROOT_SRC . 'Config.php',
-            ROOT_SRC . 'LoggerTrait.php',
-            ROOT_DIR . 'Controller/Controller.php',
-            ROOT_SRC . 'DbTrait.php',
-            ROOT_DIR . 'Entity/Entity.php',
-            ROOT_DIR . 'Manager/Manager.php',
-            ROOT_DIR . 'Service/Service.php',
-            ROOT_DIR . 'Repository/Repository.php',
-        ];
-
-        foreach ($files as $file) {
-            if (file_exists($file)) {
-                include_once $file;
-            } else {
-                throw new Exception('File ' . $file . ' not found.');
-            }
-        }
-    }
-
 }

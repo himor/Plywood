@@ -1,7 +1,12 @@
 <?php
 
+namespace Plywood\Plywood;
+
 trait DbTrait
 {
+    /**
+     * @var \PDO
+     */
     private $handler = null;
 
     /**
@@ -9,18 +14,18 @@ trait DbTrait
      *
      * @param null $dbName
      *
-     * @return bool|PDO
+     * @return bool|\PDO
      */
     private function _connect($dbName = null)
     {
         if ($dbName == null) {
-            $dbName = Plywood::$config['db']['name'];
+            $dbName = Core::$config['db']['name'];
         }
 
-        $dsn = 'mysql:dbname=' . $dbName . ';host=' . Plywood::$config['db']['hostname'] . ';charset=utf8';
+        $dsn = 'mysql:dbname=' . $dbName . ';host=' . Core::$config['db']['hostname'] . ';charset=utf8';
         try {
-            $this->handler = new PDO($dsn, Plywood::$config['db']['user'], Plywood::$config['db']['password']);
-        } catch (PDOException $e) {
+            $this->handler = new \PDO($dsn, Core::$config['db']['user'], Core::$config['db']['password']);
+        } catch (\PDOException $e) {
             $this->log('Connection failed: ' . $e->getMessage(), 'db_trait.log');
             $this->handler = null;
 

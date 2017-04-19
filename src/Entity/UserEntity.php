@@ -1,5 +1,7 @@
 <?php
 
+namespace Plywood\Entity;
+
 /**
  * Class UserEntity - Entity example
  */

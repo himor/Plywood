@@ -1,11 +1,13 @@
 <?php
 
+namespace Plywood\Entity;
+
 /**
  * Base class for Entity
  */
 class Entity
 {
-    use LoggerTrait;
+    use \Plywood\Plywood\LoggerTrait;
 
     /**
      * Returns a new entity
@@ -14,23 +16,15 @@ class Entity
      * @param array $params
      *
      * @return mixed
-     * @throws Exception
+     * @throws \Exception
      */
     public static function make($name, $params = [])
     {
         if (!$name) {
-            throw new Exception('You must specify a name');
+            throw new \Exception('You must specify a name');
         }
 
-        $name = ucfirst($name) . 'Entity';
-
-        if (!file_exists(ROOT_DIR . 'Entity/' . $name . '.php')) {
-            throw new Exception('Class not found ' . $name);
-        }
-
-        if (!class_exists($name)) {
-            include_once ROOT_DIR . 'Entity/' . $name . '.php';
-        }
+        $name = "\\" . __NAMESPACE__ . "\\" . ucfirst($name) . 'Entity';
 
         return new $name($params);
     }
