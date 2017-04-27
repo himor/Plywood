@@ -24,9 +24,7 @@ class Core
         $path = trim(str_replace(URL_BASE, '', $requestUri), '/');
         $uri  = '/' . $path;
 
-        /**
-         * processing $_GET[]
-         */
+        /* processing $_GET[] */
         $_get_ = array();
         if (strpos($uri, '?')) {
             $_get_part = substr($uri, strpos($uri, '?') + 1);
@@ -43,49 +41,37 @@ class Core
             $pattern = '/^' . str_replace('/', '\/', $rule["pattern"]) . '$/';
             if (preg_match($pattern, $uri, $params)) {
                 $controllerName = $rule["controller"];
-                /**
-                 * Ajax Controller - special case
-                 */
+                /* Ajax Controller - special case */
                 if ($controllerName == 'Ajax') {
                     $controller = new \Plywood\Controller\AjaxController();
                     if (isset($params['function_name']) && $params['function_name'])
                         $function_name = $params['function_name'] . "Action";
                     else $function_name = "indexAction";
                 } else {
-                    /**
-                     *    Initialize the controller
-                     */
+                    /* Initialize the controller */
                     $controllerName = "\\Plywood\\Controller\\" .  $controllerName . "Controller";
                     $controller     = new $controllerName;
                     $function_name  = $action . "Action";
                 }
 
-                /**
-                 *  Method inexistent
-                 */
+                /* Method inexistent */
                 if (!method_exists($controller, $function_name)) {
                     $function_name = 'indexAction';
                 }
 
                 $params['get'] = $_get_;
 
-                /**
-                 *    Execute proper function
-                 */
+                /* Execute proper function */
                 $result = $controller->$function_name($params);
                 if ($controllerName == 'Ajax') {
                     exit();
                 }
 
-                /**
-                 * Make sure parameters are set
-                 */
+                /* Make sure parameters are set */
                 if (!isset($result['params']))
                     $result['params'] = [];
 
-                /**
-                 *    Action should return the layout name. Otherwise use 'default'
-                 */
+                /* Action should return the layout name. Otherwise use 'default' */
                 $layout_name = isset($result['layout']) ? $result['layout'] : 'default';
 
                 $content = $result;
@@ -93,9 +79,7 @@ class Core
                 unset($result);
                 unset($controller);
 
-                /**
-                 *    Include the layout
-                 */
+                /* Include the layout */
                 ob_start();
                 include(ROOT_SRC . 'View/' . $rule["controller"] . '/' . $layout_name . '.php');
                 $output = ob_get_clean();
